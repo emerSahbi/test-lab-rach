@@ -1,0 +1,42 @@
+# .gitlab-ci.yml — CI pipeline for the SAST lab sandbox definition repository
+# Runs YAML linting and Ansible syntax checks on every push.
+
+default:
+  image: python:3.11-slim
+
+stages:
+  - lint
+  - validate
+
+# ── YAML lint ────────────────────────────────────────────────────────────────
+yaml-lint:
+  stage: lint
+  before_script:
+    - pip install --quiet yamllint
+  script:
+    - echo "[INFO] Linting topology.yaml..."
+    - yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" topology.yaml
+    - echo "[INFO] Linting provisioning YAML files..."
+    - yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" provisioning/
+  allow_failure: false
+
+# ── Ansible syntax check ─────────────────────────────────────────────────────
+ansible-syntax:
+  stage: validate
+  image: cytopia/ansible:2.13-tools
+  before_script:
+    - ansible --version
+  script:
+    - echo "[INFO] Running Ansible syntax check..."
+    - ansible-playbook provisioning/site.yaml --syntax-check -i "localhost,"
+  allow_failure: false
+
+# ── Ansible lint ─────────────────────────────────────────────────────────────
+ansible-lint:
+  stage: validate
+  before_script:
+    - pip install --quiet ansible ansible-lint
+  script:
+    - echo "[INFO] Running ansible-lint..."
+    - ansible-lint provisioning/site.yaml
+  allow_failure: true   # warnings only — don't block merge

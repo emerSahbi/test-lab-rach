@@ -1,0 +1,39 @@
+---
+# KYPO CyberRange (CRCZP) Sandbox Definition
+# Lab: SAST with SonarQube and Trivy
+# Adjust image_name to match images available in your KYPO OpenStack tenant.
+
+name: "sast-lab"
+
+hosts:
+  - name: toolbox
+    base_box:
+      # Ubuntu 22.04 LTS — verify with: openstack image list
+      image_name: ubuntu-jammy-server-x86_64
+    flavor:
+      # SonarQube needs at least 3 GB RAM; 8 GB is comfortable
+      cpu: 4
+      ram: 8192
+      disk: 60
+    groups:
+      - toolboxes
+    networking:
+      - network: management-net
+        # Enables SSH access from the KYPO management plane and VPN
+        access_from_management: true
+    user: ubuntu
+
+networks:
+  - name: management-net
+    cidr: "10.100.0.0/24"
+    dhcp: true
+    # Reserve first 10 addresses for routers / platform services
+    reserved_addresses: 10
+
+routers: []
+
+provisioning:
+  - scope: host
+    hosts:
+      - toolbox
+    playbook: provisioning/site.yaml
