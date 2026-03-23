@@ -15,7 +15,6 @@ hosts:
 networks:
   - name: management-net
     cidr: "10.100.0.0/24"
-    dhcp: true
 
 routers: []
 
