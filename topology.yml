@@ -11,10 +11,6 @@ hosts:
       mgmt_user: ubuntu
       mgmt_protocol: ssh
     flavor: m1.large
-    groups:
-      - toolboxes
-    networking:
-      - network: management-net
 
 networks:
   - name: management-net
