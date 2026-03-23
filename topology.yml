@@ -1,23 +1,20 @@
----
-
-
-name: "sast-lab"
+name: sast-lab
 
 hosts:
   - name: toolbox
     base_box:
-      image: Sast-training-img
-      mgmt_user: ubuntu
-      mgmt_protocol: ssh
-    flavor: m1.large
+      image: ubuntu-noble-x86_64
+      man_user: ubuntu
+    flavor: m1.small
 
 networks:
-  - name: management-net
-    cidr: "10.100.0.0/24"
+  - name: lab-net
+    cidr: 10.1.10.0/24
+    accessible_by_user: true
 
+net_mappings:
+  - host: toolbox
+    network: lab-net
+    ip: 10.1.10.10
 
-provisioning:
-  - scope: host
-    hosts:
-      - toolbox
-    playbook: provisioning/site.yaml
+groups: []
