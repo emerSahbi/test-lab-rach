@@ -1,16 +1,21 @@
-name: sast-lab
+---
+
+
+name: "sast-lab"
 
 hosts:
   - name: toolbox
     base_box:
-      image: ubuntu-jammy-server-x86_64
+      image: Sast-training-img
       mgmt_user: ubuntu
       mgmt_protocol: ssh
     flavor: m1.large
 
 networks:
   - name: management-net
-    cidr: 10.100.0.0/24
+    cidr: "10.100.0.0/24"
+
+routers: []
 
 provisioning:
   - scope: host
