@@ -15,7 +15,6 @@ networks:
   - name: management-net
     cidr: "10.100.0.0/24"
 
-routers: []
 
 provisioning:
   - scope: host
