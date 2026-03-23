@@ -1,0 +1,29 @@
+---
+
+- name: disable qxl
+  hosts:
+    - routers
+    - hosts
+  gather_facts: yes
+  become: yes
+  tasks:
+    - include_role:
+        name: disable-qxl
+      when: ansible_os_family == 'Debian'
+
+- name: set up toolbox
+  hosts: toolbox
+  become: yes
+  roles:
+    - name: common
+    - name: docker
+    - name: trivy
+    - name: lab-setup
+
+- name: set up command logging
+  hosts: hosts
+  become: yes
+  roles:
+    - role: sandbox-logging
+      slf_destination_port: '{% if hostvars["man"] is defined -%} 514 {%- else -%} 515 {%- endif %}'
+...

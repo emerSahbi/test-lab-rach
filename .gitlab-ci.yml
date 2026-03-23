@@ -14,8 +14,8 @@ yaml-lint:
   before_script:
     - pip install --quiet yamllint
   script:
-    - echo "[INFO] Linting topology.yaml..."
-    - yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" topology.yaml
+    - echo "[INFO] Linting topology.yml..."
+    - yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" topology.yml
     - echo "[INFO] Linting provisioning YAML files..."
     - yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" provisioning/
   allow_failure: false
@@ -28,7 +28,7 @@ ansible-syntax:
     - ansible --version
   script:
     - echo "[INFO] Running Ansible syntax check..."
-    - ansible-playbook provisioning/site.yaml --syntax-check -i "localhost,"
+    - ansible-playbook provisioning/playbook.yml --syntax-check -i "localhost,"
   allow_failure: false
 
 # ── Ansible lint ─────────────────────────────────────────────────────────────
@@ -38,5 +38,5 @@ ansible-lint:
     - pip install --quiet ansible ansible-lint
   script:
     - echo "[INFO] Running ansible-lint..."
-    - ansible-lint provisioning/site.yaml
+    - ansible-lint provisioning/playbook.yml
   allow_failure: true   # warnings only — don't block merge
