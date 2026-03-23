@@ -15,6 +15,10 @@
   hosts: toolbox
   become: yes
   roles:
+    - name: user-access
+      user_access_username: user
+      user_access_password: Password123
+      user_access_sudo: true
     - name: common
     - name: docker
     - name: trivy
