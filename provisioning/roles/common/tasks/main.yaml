@@ -1,0 +1,37 @@
+---
+# Role: common
+# Installs base packages, sets locale and timezone.
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install base packages
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - git
+      - python3
+      - python3-pip
+      - python3-venv
+      - jq
+      - unzip
+      - wget
+      - net-tools
+      - iputils-ping
+      - apt-transport-https
+      - software-properties-common
+      - tree
+    state: present
+
+- name: Set timezone to UTC
+  community.general.timezone:
+    name: UTC
+
+- name: Set system locale
+  command: localectl set-locale LANG=en_US.UTF-8
+  changed_when: false

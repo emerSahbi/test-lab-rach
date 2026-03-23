@@ -1,0 +1,37 @@
+---
+# Role: trivy
+# Installs Trivy as a native binary from Aqua Security's official apt repo.
+
+- name: Download Trivy GPG key (armored)
+  shell: |
+    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key \
+      | gpg --dearmor \
+      | tee /usr/share/keyrings/trivy.gpg > /dev/null
+  args:
+    creates: /usr/share/keyrings/trivy.gpg
+
+- name: Add Trivy apt repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main"
+    filename: trivy
+    state: present
+
+- name: Install Trivy
+  apt:
+    name: trivy
+    state: present
+    update_cache: yes
+
+- name: Verify Trivy installation
+  command: trivy --version
+  register: trivy_version
+  changed_when: false
+
+- name: Show Trivy version
+  debug:
+    msg: "{{ trivy_version.stdout }}"
+
+- name: Update Trivy vulnerability database
+  shell: trivy image --download-db-only
+  changed_when: false
+  ignore_errors: yes

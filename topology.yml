@@ -1,0 +1,20 @@
+name: sast-lab
+
+hosts:
+  - name: toolbox
+    base_box:
+      image: ubuntu-noble-x86_64
+      man_user: ubuntu
+    flavor: m1.small
+
+networks:
+  - name: lab-net
+    cidr: 10.1.10.0/24
+    accessible_by_user: true
+
+net_mappings:
+  - host: toolbox
+    network: lab-net
+    ip: 10.1.10.10
+
+groups: []

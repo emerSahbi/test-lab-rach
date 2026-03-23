@@ -1,0 +1,32 @@
+# DELIBERATELY OUTDATED — FOR SAST / TRIVY TRAINING PURPOSES ONLY
+# These pinned versions contain known CVEs that Trivy will detect.
+# Do NOT use these versions in a real project.
+
+# CVE-2019-14806 — Werkzeug debug PIN predictable (affects Flask dev server)
+flask==0.12.2
+
+# CVE-2021-33503 — ReDoS in urllib3's authority parser
+urllib3==1.24.3
+
+# CVE-2023-32681 — Requests leaks Proxy-Authorization header on redirect
+requests==2.28.0
+
+# CVE-2020-28168 — axios-like SSRF analogue; kept for demonstration
+# CVE-2022-42969 — ReDoS in py library (used by pytest)
+py==1.11.0
+
+# Multiple CVEs in old Pillow (image processing library)
+# CVE-2023-44271, CVE-2023-50447
+Pillow==9.3.0
+
+# CVE-2020-1747 — PyYAML arbitrary code execution via full_load
+PyYAML==5.3.1
+
+# CVE-2019-10906 — Jinja2 sandbox escape via str.format_map
+Jinja2==2.10.3
+
+# SQLAlchemy (no CVE, included to show clean results alongside vulnerable ones)
+SQLAlchemy==2.0.23
+
+# Cryptography — keeping this current to show Trivy reporting "no issue" here
+cryptography==41.0.7

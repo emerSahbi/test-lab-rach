@@ -1,0 +1,39 @@
+
+ ╔══════════════════════════════════════════════════════════════════╗
+ ║          KYPO CyberRange — SAST Lab (SonarQube + Trivy)         ║
+ ╚══════════════════════════════════════════════════════════════════╝
+
+ Your toolbox is ready. All required tools are pre-installed:
+   • Docker CE          ─ docker --version
+   • SonarQube image    ─ docker images sonarqube
+   • SonarScanner CLI   ─ docker images sonarsource/sonar-scanner-cli
+   • Trivy              ─ trivy --version
+
+ ── Quick-start ────────────────────────────────────────────────────
+
+  1. Start SonarQube:
+       ~/start-sonarqube.sh
+
+  2. Open SonarQube in your browser:
+       http://<THIS-VM-IP>:9000     (run: ip -br a)
+     Login: admin / admin  (change password on first login)
+
+  3. Generate a SonarQube token then run the scanner:
+       ~/run-sonar-scan.sh <YOUR_TOKEN>
+
+  4. Run Trivy scans:
+       ~/run-trivy-scan.sh all
+
+  5. Reports land in:  ~/reports/
+
+ ── Vulnerable app ──────────────────────────────────────────────────
+
+  ~/vulnerable-app/          ← source to scan
+    app.py                   ← intentionally vulnerable Python app
+    requirements.txt         ← deps with known CVEs (for Trivy)
+    sonar-project.properties ← SonarQube project config
+    Dockerfile               ← build to get a scannable image
+
+ ──────────────────────────────────────────────────────────────────
+ Good luck and happy scanning!
+

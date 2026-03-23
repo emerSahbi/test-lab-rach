@@ -1,0 +1,81 @@
+---
+# Role: docker
+# Installs Docker CE and pre-pulls all images required for the SAST lab.
+
+# ── 1. Install Docker CE ────────────────────────────────────────────────────
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    keyring: /etc/apt/keyrings/docker.gpg
+    state: present
+
+- name: Add Docker apt repository
+  apt_repository:
+    repo: >-
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg]
+      https://download.docker.com/linux/ubuntu
+      {{ ansible_distribution_release }} stable
+    filename: docker
+    state: present
+
+- name: Install Docker CE packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: yes
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Add ubuntu user to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
+
+# ── 2. Tune kernel for SonarQube (requires higher vm.max_map_count) ────────
+
+- name: Set vm.max_map_count for SonarQube Elasticsearch
+  sysctl:
+    name: vm.max_map_count
+    value: "262144"
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Persist vm.max_map_count across reboots
+  lineinfile:
+    path: /etc/sysctl.d/99-sonarqube.conf
+    line: "vm.max_map_count=262144"
+    create: yes
+
+# ── 3. Pre-pull lab images ──────────────────────────────────────────────────
+
+- name: Pull SonarQube Community Edition image
+  shell: docker pull sonarqube:community
+  changed_when: false
+  ignore_errors: yes
+
+- name: Pull SonarScanner CLI image
+  shell: docker pull sonarsource/sonar-scanner-cli:latest
+  changed_when: false
+  ignore_errors: yes
+
+- name: Pull Trivy image (Docker-based alternative)
+  shell: docker pull aquasec/trivy:latest
+  changed_when: false
+  ignore_errors: yes
+
+- name: Pull nginx image (Trivy image-scan target)
+  shell: docker pull nginx:1.24
+  changed_when: false
+  ignore_errors: yes

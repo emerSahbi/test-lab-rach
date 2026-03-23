@@ -1,0 +1,116 @@
+---
+# Role: lab-setup
+# Deploys the vulnerable sample application, helper scripts, and welcome MOTD.
+
+# ── 1. Create project directory ─────────────────────────────────────────────
+
+- name: Create vulnerable-app directory
+  file:
+    path: /home/ubuntu/vulnerable-app
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Create reports directory
+  file:
+    path: /home/ubuntu/reports
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+# ── 2. Deploy vulnerable application files ──────────────────────────────────
+
+- name: Copy vulnerable Python application
+  copy:
+    src: vulnerable-app/app.py
+    dest: /home/ubuntu/vulnerable-app/app.py
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+
+- name: Copy requirements.txt (with known-CVE packages)
+  copy:
+    src: vulnerable-app/requirements.txt
+    dest: /home/ubuntu/vulnerable-app/requirements.txt
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+
+- name: Copy sonar-project.properties
+  copy:
+    src: vulnerable-app/sonar-project.properties
+    dest: /home/ubuntu/vulnerable-app/sonar-project.properties
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+
+- name: Copy Dockerfile for Trivy image scan exercise
+  copy:
+    src: vulnerable-app/Dockerfile
+    dest: /home/ubuntu/vulnerable-app/Dockerfile
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+
+# ── 3. Initialise a local git repository ────────────────────────────────────
+
+- name: Initialise git repo in vulnerable-app
+  shell: |
+    cd /home/ubuntu/vulnerable-app
+    git init
+    git config user.email "trainee@sast-lab.local"
+    git config user.name "SAST Trainee"
+    git add -A
+    git commit -m "Initial commit — deliberately-vulnerable app for SAST training"
+  args:
+    chdir: /home/ubuntu/vulnerable-app
+    creates: /home/ubuntu/vulnerable-app/.git
+  become_user: ubuntu
+
+# ── 4. Deploy helper scripts ─────────────────────────────────────────────────
+
+- name: Copy start-sonarqube helper script
+  copy:
+    src: scripts/start-sonarqube.sh
+    dest: /home/ubuntu/start-sonarqube.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Copy run-sonar-scan helper script
+  copy:
+    src: scripts/run-sonar-scan.sh
+    dest: /home/ubuntu/run-sonar-scan.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Copy run-trivy-scan helper script
+  copy:
+    src: scripts/run-trivy-scan.sh
+    dest: /home/ubuntu/run-trivy-scan.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+# ── 5. MOTD ──────────────────────────────────────────────────────────────────
+
+- name: Remove default MOTD scripts
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/update-motd.d/10-help-text
+    - /etc/update-motd.d/50-motd-news
+    - /etc/update-motd.d/80-livepatch
+  ignore_errors: yes
+
+- name: Deploy SAST lab MOTD
+  copy:
+    src: motd/sast-motd
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: "0644"
