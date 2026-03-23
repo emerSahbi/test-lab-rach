@@ -1,17 +1,15 @@
 ---
-# Main Ansible entry-point for the SAST lab sandbox.
-# Executed by the KYPO platform after the VM is created.
 
 - name: Provision SAST toolbox
-  hosts: toolboxes
+  hosts: all
   become: true
   gather_facts: true
 
   roles:
-    - user-access      # KYPO: trainee SSH user + key provisioning
-    - disable-qxl      # KYPO: disable QXL display driver (VMs)
-    - sandbox-logging  # KYPO: centralised sandbox activity logging
-    - common           # base packages, locale, timezone
-    - docker           # Docker CE + pre-pull lab images
-    - trivy            # Trivy native binary
-    - lab-setup        # vulnerable app, helper scripts, MOTD
+    - user-access      
+    - disable-qxl     
+    - sandbox-logging  
+    - common           
+    - docker           
+    - trivy            
+    - lab-setup        D
