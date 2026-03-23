@@ -1,12 +1,8 @@
----
-
-
-name: "sast-lab"
+name: sast-lab
 
 hosts:
   - name: toolbox
     base_box:
-      # Ubuntu 22.04 LTS — verify name with: openstack image list
       image: ubuntu-jammy-server-x86_64
       mgmt_user: ubuntu
       mgmt_protocol: ssh
@@ -14,10 +10,7 @@ hosts:
 
 networks:
   - name: management-net
-    cidr: "10.100.0.0/24"
-    dhcp: true
-
-routers: []
+    cidr: 10.100.0.0/24
 
 provisioning:
   - scope: host
